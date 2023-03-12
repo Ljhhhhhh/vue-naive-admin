@@ -58,8 +58,8 @@ export function getRouteNames(routes: RoutesType) {
 
 function getRouteName(route: RouteType) {
   const names = [route.name];
-  if (route.children && route.children.length)
+  if (route.children && route.children.length) {
     names.push(...route.children.map((item) => getRouteName(item as RouteType)).flat(1));
-
+  }
   return names;
 }

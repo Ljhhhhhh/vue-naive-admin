@@ -9,8 +9,8 @@ export function getToken() {
   return getLocal(TOKEN_CODE);
 }
 
-export function setToken(token: string) {
-  setLocal(TOKEN_CODE, token, DURATION);
+export function setToken(token: string, expire?: number) {
+  setLocal(TOKEN_CODE, token, expire || DURATION);
 }
 
 export function removeToken() {

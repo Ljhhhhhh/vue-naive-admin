@@ -39,7 +39,7 @@
       loginLoading.value = true;
       const res: any = await login({ name, password: password.toString() });
       window.$notification?.success({ title: '登录成功！', duration: 2500 });
-      setToken(res.data.token);
+      setToken(res.data.token, 36000);
       if (isRemember.value) setLocal('loginInfo', { name, password });
       else removeLocal('loginInfo');
 
