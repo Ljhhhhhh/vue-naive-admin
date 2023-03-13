@@ -9,7 +9,9 @@ export function reqResolve(config: RequestConfig) {
   if (config.noNeedToken) return config;
 
   const token = getToken();
-  if (!token) return Promise.reject(new AxiosRejectError({ code: 401, message: '登录已过期，请重新登录！' }));
+  if (!token) {
+    return Promise.reject(new AxiosRejectError({ code: 401, message: '登录已过期，请重新登录！' }));
+  }
 
   /**
    * * 加上 token

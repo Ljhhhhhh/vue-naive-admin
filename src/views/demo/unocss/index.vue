@@ -61,6 +61,28 @@
         </div>
       </div>
       <h2 font-normal text-14 mt-10 color-gray>Flex 骰子</h2>
+      <n-button @click="search">点击</n-button>
+      <div>{{ data }}</div>
     </div>
   </CommonPage>
 </template>
+<script lang="ts" setup>
+  import { useRequest } from 'vue-request';
+  import { getPosts } from '@/api/table';
+  const { data, run } = useRequest(getPosts, {
+    defaultParams: [
+      {
+        title: '',
+      },
+    ],
+  });
+  // onMounted(() => {
+  //   run();
+  // });
+
+  const search = () => {
+    run({
+      title: '使用纯',
+    });
+  };
+</script>
