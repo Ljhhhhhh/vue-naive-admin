@@ -9,7 +9,7 @@ export function createAxios(options = {}) {
     ...defaultOptions,
     ...options,
   });
-  service.interceptors.request.use(reqResolve, reqReject);
+  service.interceptors.request.use(reqResolve as any, reqReject);
   service.interceptors.response.use(resResolve, resReject);
   return service;
 }

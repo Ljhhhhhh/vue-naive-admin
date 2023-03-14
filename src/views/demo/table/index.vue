@@ -1,151 +1,3 @@
-<script setup lang="ts">
-  import type { DataTableColumns } from 'naive-ui';
-  import { NButton, NSwitch } from 'naive-ui';
-  import { CrudModal, CrudTable, QueryBarItem, useCRUD } from '@zclzone/crud';
-  import { addPost, deletePost, updatePost, getPosts } from '@/api/table';
-  import { formatDateTime, isNullOrUndef, renderIcon } from '@/utils';
-
-  interface RowData {
-    id: number;
-    isPublish: boolean;
-    title: string;
-    category: string;
-    author: string;
-    createDate: string;
-    updateDate: string;
-    publishing: boolean;
-  }
-
-  const $table = ref<any>(null);
-  /** QueryBar筛选参数（可选） */
-  const queryItems = ref<any>({});
-  /** 补充参数（可选） */
-  const extraParams = ref<any>({});
-
-  const {
-    modalVisible,
-    modalAction,
-    modalTitle,
-    modalLoading,
-    handleAdd,
-    handleDelete,
-    handleEdit,
-    handleView,
-    handleSave,
-    modalForm,
-    modalFormRef,
-  } = useCRUD({
-    name: '文章',
-    initForm: { author: '大脸怪' },
-    doCreate: addPost,
-    doDelete: deletePost,
-    doUpdate: updatePost,
-    refresh: () => $table.value?.handleSearch(),
-  });
-
-  const columns: DataTableColumns<RowData> = [
-    { type: 'selection', fixed: 'left' },
-    {
-      title: '发布',
-      key: 'isPublish',
-      width: 60,
-      align: 'center',
-      fixed: 'left',
-      render(row) {
-        return h(NSwitch, {
-          size: 'small',
-          rubberBand: false,
-          value: row.isPublish,
-          loading: !!row.publishing,
-          onUpdateValue: () => handlePublish(row),
-        });
-      },
-    },
-    { title: '标题', key: 'title', width: 150, ellipsis: { tooltip: true } },
-    { title: '分类', key: 'category', width: 80, ellipsis: { tooltip: true } },
-    { title: '创建人', key: 'author', width: 80 },
-    {
-      title: '创建时间',
-      key: 'createDate',
-      width: 150,
-      render(row) {
-        return h('span', formatDateTime(row.createDate));
-      },
-    },
-    {
-      title: '最后更新时间',
-      key: 'updateDate',
-      width: 150,
-      render(row) {
-        return h('span', formatDateTime(row.updateDate));
-      },
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      width: 240,
-      align: 'center',
-      fixed: 'right',
-      render(row) {
-        return [
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'primary',
-              secondary: true,
-              onClick: () => handleView(row),
-            },
-            { default: () => '查看', icon: renderIcon('majesticons:eye-line', { size: 14 }) },
-          ),
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'primary',
-              style: 'margin-left: 15px;',
-              onClick: () => handleEdit(row),
-            },
-            { default: () => '编辑', icon: renderIcon('material-symbols:edit-outline', { size: 14 }) },
-          ),
-
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'error',
-              style: 'margin-left: 15px;',
-              onClick: () => handleDelete(row.id),
-            },
-            { default: () => '删除', icon: renderIcon('material-symbols:delete-outline', { size: 14 }) },
-          ),
-        ];
-      },
-    },
-  ];
-
-  // 选中事件
-  function onChecked(rowKeys: string[]) {
-    if (rowKeys.length) window.$message?.info(`选中${rowKeys.join(' ')}`);
-  }
-
-  // 发布
-  function handlePublish(row: RowData) {
-    if (isNullOrUndef(row.id)) return;
-
-    row.publishing = true;
-    setTimeout(() => {
-      row.isPublish = !row.isPublish;
-      row.publishing = false;
-      window.$message?.success(row.isPublish ? '已发布' : '已取消发布');
-    }, 1000);
-  }
-
-  onMounted(() => {
-    $table.value?.handleSearch();
-  });
-</script>
-
 <template>
   <CommonPage show-footer title="文章">
     <template #action>
@@ -227,3 +79,154 @@
     </CrudModal>
   </CommonPage>
 </template>
+
+<script setup lang="ts">
+  import type { DataTableColumns } from 'naive-ui';
+  import { NButton, NSwitch } from 'naive-ui';
+  import { CrudModal, CrudTable, QueryBarItem } from '@/components/table';
+  import { addPost, deletePost, updatePost, getPosts } from '@/api/table';
+  import { formatDateTime, isNullOrUndef, renderIcon } from '@/utils';
+  import useCRUD from '@/hooks/useCRUD';
+
+  interface RowData {
+    id: number;
+    isPublish: boolean;
+    title: string;
+    category: string;
+    author: string;
+    createDate: string;
+    updateDate: string;
+    publishing: boolean;
+  }
+
+  const $table = ref<any>(null);
+  /** QueryBar筛选参数（可选） */
+  const queryItems = ref<any>({});
+  /** 补充参数（可选） */
+  const extraParams = ref<any>({});
+
+  const tempData = ref<any>();
+  const {
+    modalVisible,
+    modalAction,
+    modalTitle,
+    modalLoading,
+    handleAdd,
+    handleDelete,
+    handleEdit,
+    handleView,
+    handleSave,
+    modalForm,
+    modalFormRef,
+  } = useCRUD({
+    name: '文章',
+    initForm: {},
+    doCreate: addPost,
+    doDelete: deletePost,
+    doUpdate: updatePost,
+    refresh: () => $table.value?.handleSearch(),
+  });
+
+  const columns: DataTableColumns<RowData> = [
+    { type: 'selection', fixed: 'left' },
+    {
+      title: '发布',
+      key: 'isPublish',
+      width: 60,
+      align: 'center',
+      fixed: 'left',
+      render(row) {
+        return h(NSwitch, {
+          size: 'small',
+          rubberBand: false,
+          value: row.isPublish,
+          loading: !!row.publishing,
+          onUpdateValue: () => handlePublish(row),
+        });
+      },
+    },
+    { title: '标题', key: 'title', width: 150, ellipsis: { tooltip: true } },
+    { title: '分类', key: 'category', width: 80, ellipsis: { tooltip: true } },
+    { title: '创建人', key: 'author', width: 80 },
+    {
+      title: '创建时间',
+      key: 'createDate',
+      width: 150,
+      render(row) {
+        return h('span', formatDateTime(row.createDate));
+      },
+    },
+    {
+      title: '最后更新时间',
+      key: 'updateDate',
+      width: 150,
+      render(row) {
+        return h('span', formatDateTime(row.updateDate));
+      },
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 240,
+      align: 'center',
+      fixed: 'right',
+      render(row) {
+        return [
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              secondary: true,
+              onClick: () => handleView(row),
+            },
+            { default: () => '查看', icon: renderIcon('majesticons:eye-line', { size: 14 }) },
+            // { default: () => '查看', icon: renderIcon('majesticons:eye-line', { size: 14 }) },
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              style: 'margin-left: 15px;',
+              onClick: () => handleEdit(row),
+            },
+            { default: () => '编辑', icon: renderIcon('material-symbols:edit-outline', { size: 14 }) },
+          ),
+
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'error',
+              style: 'margin-left: 15px;',
+              onClick: () => handleDelete(row.id),
+            },
+            { default: () => '删除', icon: renderIcon('material-symbols:delete-outline', { size: 14 }) },
+          ),
+        ];
+      },
+    },
+  ];
+
+  // 选中事件
+  function onChecked(rowKeys: string[]) {
+    if (rowKeys.length) window.$message?.info(`选中${rowKeys.join(' ')}`);
+  }
+
+  // 发布
+  function handlePublish(row: RowData) {
+    if (isNullOrUndef(row.id)) return;
+
+    row.publishing = true;
+    setTimeout(() => {
+      row.isPublish = !row.isPublish;
+      row.publishing = false;
+      window.$message?.success(row.isPublish ? '已发布' : '已取消发布');
+    }, 1000);
+  }
+
+  onMounted(() => {
+    $table.value?.handleSearch();
+  });
+</script>

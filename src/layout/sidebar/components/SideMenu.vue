@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import type { MenuInst, MenuOption } from 'naive-ui';
   import type { Meta, RouteType } from '~/types/router';
-  import { useAppStore, usePermissionStore, useThemeStore } from '@/store';
+  import { useAppStore, useUserStore, useThemeStore } from '@/store';
   import { isUrl, renderCustomIcon, renderIcon } from '@/utils';
+  import { MenuMixedOption } from 'naive-ui/es/menu/src/interface';
 
   const router = useRouter();
   const currentRoute = useRoute();
-  const permissionStore = usePermissionStore();
+  const userStore = useUserStore();
   const themeStore = useThemeStore();
   const appStore = useAppStore();
 
@@ -17,7 +18,7 @@
   });
 
   const menuOptions = computed(() => {
-    return permissionStore.menus.map((item) => getMenuItem(item)).sort((a, b) => a.order - b.order);
+    return userStore.menus.map((item) => getMenuItem(item)).sort((a, b) => a.order - b.order);
   });
 
   function resolvePath(basePath: string, path: string) {
@@ -28,17 +29,17 @@
       .join('/')}`;
   }
 
-  interface MennuItem {
+  interface MenuItem {
     label: string;
     key: string;
     path: string;
     icon: (() => import('vue').VNodeChild) | null;
     order: number;
-    children?: Array<MennuItem>;
+    children?: Array<MenuItem>;
   }
 
-  function getMenuItem(route: RouteType, basePath = ''): MennuItem {
-    let menuItem: MennuItem = {
+  function getMenuItem(route: RouteType, basePath = ''): MenuItem {
+    let menuItem: MenuItem = {
       label: (route.meta && route.meta.title) || route.name,
       key: route.name,
       path: resolvePath(basePath, route.path),
@@ -87,7 +88,7 @@
   }
 
   function handleMenuSelect(key: string, item: MenuOption) {
-    const menuItem = item as MennuItem & MenuOption;
+    const menuItem = item as MenuItem & MenuOption;
     if (isUrl(menuItem.path)) {
       window.open(menuItem.path);
       return;
@@ -108,8 +109,8 @@
     :indent="18"
     :collapsed-icon-size="22"
     :collapsed-width="64"
-    :options="menuOptions"
-    :value="(currentRoute.meta && currentRoute.meta.activeMenu) || currentRoute.name"
+    :options="menuOptions as unknown as MenuMixedOption[]"
+    :value="(currentRoute.meta?.activeMenu as any) || currentRoute.name"
     @update:value="handleMenuSelect"
   />
 </template>

@@ -1,20 +1,24 @@
 import { defineStore } from 'pinia';
 import { removeToken, toLogin } from '@/utils';
-import { usePermissionStore, useTabStore } from '@/store';
+import { useTabStore } from '@/store';
 import { resetRouter } from '@/router';
 import { getUser } from '@/api/auth';
+import { filterAsyncRoutes } from './helpers';
+import { asyncRoutes, basicRoutes } from '@/router/routes';
+import type { RoutesType } from '~/types/router';
 
 interface UserInfo {
   id?: string;
   name?: string;
   avatar?: string;
-  role?: Array<string>;
+  role?: string;
 }
 
 export const useUserStore = defineStore('user', {
   state() {
     return {
       userInfo: <UserInfo>{},
+      accessRoutes: <RoutesType>[],
     };
   },
   getters: {
@@ -27,8 +31,14 @@ export const useUserStore = defineStore('user', {
     avatar(): string {
       return this.userInfo.avatar || '';
     },
-    role(): Array<string> {
-      return this.userInfo.role || [];
+    role(): string {
+      return this.userInfo.role || '';
+    },
+    routes(): RoutesType {
+      return basicRoutes.concat(this.accessRoutes);
+    },
+    menus(): RoutesType {
+      return this.routes.filter((route) => route.name && !route.isHidden);
     },
   },
   actions: {
@@ -46,11 +56,18 @@ export const useUserStore = defineStore('user', {
         return Promise.reject(error);
       }
     },
+    generateRoutes(role: string): RoutesType {
+      const accessRoutes = filterAsyncRoutes(asyncRoutes, role);
+      this.accessRoutes = accessRoutes;
+      return accessRoutes;
+    },
+    resetPermission() {
+      this.accessRoutes = [];
+    },
     async logout() {
       const { resetTabs } = useTabStore();
-      const { resetPermission } = usePermissionStore();
       removeToken();
-      resetPermission();
+      this.resetPermission();
       resetTabs();
       resetRouter();
       this.$reset();

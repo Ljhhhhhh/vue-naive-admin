@@ -32,16 +32,16 @@
               <n-statistic label="待办" :value="4" w-80>
                 <template #suffix> / 10 </template>
               </n-statistic>
-              <n-statistic label="Stars" w-80 ml-20>
-                <a href="https://github.com/zclzone/qs-admin">
-                  <img allt="stars" src="https://badgen.net/github/stars/zclzone/qs-admin" />
+              <!-- <n-statistic label="Stars" w-80 ml-20>
+                <a href="https://github.com/Ljhhhhhh/vue-naive-admin">
+                  <img alt="stars" src="https://badgen.net/github/Ljhhhhhh/vue-naive-admin" />
                 </a>
               </n-statistic>
               <n-statistic label="Forks" w-80 ml-20>
-                <a href="https://github.com/zclzone/qs-admin">
-                  <img allt="forks" src="https://badgen.net/github/forks/zclzone/qs-admin" />
+                <a href="https://github.com/Ljhhhhhh/vue-naive-admin">
+                  <img alt="forks" src="https://badgen.net/github/forks/Ljhhhhhh/vue-naive-admin" />
                 </a>
-              </n-statistic>
+              </n-statistic> -->
             </div>
           </div>
         </n-card>

@@ -1,6 +1,6 @@
 import type { RouteType, RoutesType } from '~/types/router';
 
-function hasPermission(route: RouteType, role: string[]) {
+function hasPermission(route: RouteType, role: string) {
   // * 不需要权限直接返回true
   if (!route.meta?.requireAuth) return true;
 
@@ -10,10 +10,10 @@ function hasPermission(route: RouteType, role: string[]) {
   if (!role.length || !routeRole.length) return false;
 
   // * 路由指定的角色包含任一登录用户角色则判定有权限
-  return role.some((item) => routeRole.includes(item));
+  return routeRole.includes(role);
 }
 
-export function filterAsyncRoutes(routes: RoutesType = [], role: Array<string>): RoutesType {
+export function filterAsyncRoutes(routes: RoutesType = [], role: string): RoutesType {
   const ret: RoutesType = [];
   routes.forEach((route) => {
     if (hasPermission(route, role)) {

@@ -31,20 +31,11 @@ export const basicRoutes: RoutesType = [
     children: [
       {
         name: 'LinkGithubSrc',
-        path: 'https://github.com/zclzone/qs-admin',
+        path: 'https://github.com/Ljhhhhhh/vue-naive-admin',
         component: () => null,
         meta: {
           title: '源码 - github',
           icon: 'mdi:github',
-        },
-      },
-      {
-        name: 'LinkGiteeSrc',
-        path: 'https://gitee.com/zclzone/qs-admin-ts',
-        component: () => null,
-        meta: {
-          title: '源码 - gitee',
-          icon: 'simple-icons:gitee',
         },
       },
     ],
